@@ -46,7 +46,8 @@ return [
     |
     */
 
-    'expiration' => null,
+    'expiration' => env('TOKEN_EXP', 0.333333),
+    'refresh_expiration' => env('TOKEN_REFRESH_EXP', 1), // weekly
 
     /*
     |--------------------------------------------------------------------------
