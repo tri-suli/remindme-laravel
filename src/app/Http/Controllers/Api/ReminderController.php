@@ -9,7 +9,9 @@ use App\Http\Requests\StoreReminderRequest;
 use App\Http\Requests\UpdateReminderRequest;
 use App\Http\Resources\DeleteResource;
 use App\Http\Resources\ReminderResource;
+use App\Http\Resources\RemindersResource;
 use App\Repositories\Repository;
+use Illuminate\Http\Request;
 
 class ReminderController extends Controller
 {
@@ -27,6 +29,16 @@ class ReminderController extends Controller
     {
         $this->middleware('auth:sanctum');
         $this->repository = $repository;
+    }
+
+    /**
+     * Handle request to view reminder list
+     */
+    public function index(Request $request): RemindersResource
+    {
+        return new RemindersResource(
+            $this->repository->take($request->query('limit', 10))
+        );
     }
 
     /**

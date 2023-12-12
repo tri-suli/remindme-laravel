@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\EAV\Entity;
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use PhpParser\Node\Expr\AssignOp\Mod;
 
@@ -60,6 +61,17 @@ abstract class Repository
     public function delete(int $id): bool
     {
         return (bool) $this->find($id)->delete();
+    }
+
+    /**
+     * Get all records with specified limit
+     *
+     * @param int $limit
+     * @return Collection
+     */
+    public function take(int $limit): Collection
+    {
+        return $this->model->limit($limit)->get();
     }
 
     /**
