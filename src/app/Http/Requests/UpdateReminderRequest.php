@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\BelongsToRule;
 use App\Rules\EventReminderRule;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
@@ -18,7 +19,7 @@ class UpdateReminderRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id' => ['bail', 'exists:reminders,id'],
+            'id' => ['bail', 'exists:reminders,id', new BelongsToRule($this->user()->id)],
             'title' => ['nullable'],
             'description' => ['nullable'],
             'remind_at' => ['nullable', 'date_format:U', new EventReminderRule($this->id, $this->get('event_at'))],
