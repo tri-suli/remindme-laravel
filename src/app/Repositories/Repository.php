@@ -52,6 +52,17 @@ abstract class Repository
     }
 
     /**
+     * Delete one record by id
+     *
+     * @param int $id
+     * @return bool
+     */
+    public function delete(int $id): bool
+    {
+        return (bool) $this->find($id)->delete();
+    }
+
+    /**
      * Get the eloquent model instance
      *
      * @return Model

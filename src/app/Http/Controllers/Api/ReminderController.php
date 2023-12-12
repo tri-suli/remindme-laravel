@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\ShowReminderRequest;
 use App\Http\Requests\StoreReminderRequest;
 use App\Http\Requests\UpdateReminderRequest;
+use App\Http\Resources\DeleteResource;
 use App\Http\Resources\ReminderResource;
 use App\Repositories\Repository;
 
@@ -87,5 +88,15 @@ class ReminderController extends Controller
                 $reminder->event_at
             )
         );
+    }
+
+    /**
+     * Handle delete existing reminder resource by id.
+     */
+    public function delete(ShowReminderRequest $request): DeleteResource
+    {
+        $this->repository->delete($request->id);
+
+        return new DeleteResource();
     }
 }

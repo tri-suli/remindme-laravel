@@ -57,4 +57,19 @@ class ReminderRepositoryTest extends TestCase
         $this->assertDatabaseMissing('reminders', $oldReminder->only('title', 'description', 'remind_at', 'event_at'));
         $this->assertDatabaseHas('reminders', $values);
     }
+
+    /** @test */
+    public function it_will_delete_existing_reminder_record_from_database(): void
+    {
+        $repository = new ReminderRepository();
+        $user = User::factory()->create();
+        $reminder = Reminder::factory()->belongsTo($user)->create();
+
+        $deleted = $repository->delete($reminder->id);
+
+        $this->assertTrue($deleted);
+        $this->assertDatabaseMissing('reminders', $reminder->only([
+            'id', 'title', 'description', 'remind_at', 'event_at',
+        ]));
+    }
 }

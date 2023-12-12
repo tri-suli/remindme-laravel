@@ -22,6 +22,10 @@ class ErrorResource extends JsonResource
         }
 
         if (array_key_exists('id', $this->resource->errors())) {
+            if (str_contains($this->resource->errors()['id'][0], 'belongs to')) {
+                return Response::HTTP_FORBIDDEN;
+            }
+
             return Response::HTTP_NOT_FOUND;
         }
 

@@ -29,4 +29,5 @@ Route::prefix('reminders')->group(function (Router $router) {
     $router->get('{id}', [ReminderController::class, 'show'])->name('api.reminder.show');
     $router->post('/', [ReminderController::class, 'store'])->name('api.reminder.store');
     $router->put('{id}', [ReminderController::class, 'update'])->name('api.reminder.update');
+    $router->delete('{id}', [ReminderController::class, 'delete'])->name('api.reminder.delete');
 });
