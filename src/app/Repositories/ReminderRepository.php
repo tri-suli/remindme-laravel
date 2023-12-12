@@ -24,20 +24,6 @@ class ReminderRepository extends Repository
     /**
      * {@inheritDoc}
      */
-    public function toEntity(): ReminderEntity
-    {
-        return new ReminderEntity(
-            $this->model->id,
-            $this->model->title,
-            $this->model->description,
-            $this->model->remind_at,
-            $this->model->event_at
-        );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public function model(): string
     {
         return Reminder::class;
