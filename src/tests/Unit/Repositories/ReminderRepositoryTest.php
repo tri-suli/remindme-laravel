@@ -2,10 +2,12 @@
 
 namespace Tests\Unit\Repositories;
 
+use App\Models\Reminder;
 use App\Models\User;
 use App\Repositories\ReminderRepository;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Date;
 use Tests\TestCase;
 
 class ReminderRepositoryTest extends TestCase
@@ -31,5 +33,28 @@ class ReminderRepositoryTest extends TestCase
         $this->assertEquals($record['description'], $result->description);
         $this->assertEquals($record['remind_at'], $result->remind_at);
         $this->assertEquals($record['event_at'], $result->event_at);
+    }
+
+    /** @test  */
+    public function it_will_update_existing_reminder_record_by_id(): void
+    {
+        $repository = new ReminderRepository();
+        $user = User::factory()->create();
+        $oldReminder = Reminder::factory()->belongsTo($user)->create();
+        $values = [
+            'title' => 'New Title',
+            'description' => 'New Description',
+            'remind_at' => Date::now()->format('U'),
+            'event_at' => Date::now()->addDays(3)->format('U'),
+        ];
+
+        $newReminder = $repository->update($oldReminder->id, $values);
+
+        $this->assertNotEquals(
+            $newReminder->only('title', 'description', 'remind_at', 'event_at'),
+            $oldReminder->only('title', 'description', 'remind_at', 'event_at'),
+        );
+        $this->assertDatabaseMissing('reminders', $oldReminder->only('title', 'description', 'remind_at', 'event_at'));
+        $this->assertDatabaseHas('reminders', $values);
     }
 }

@@ -27,6 +27,31 @@ abstract class Repository
     }
 
     /**
+     * Get one record by id
+     *
+     * @param int $id
+     * @return Model|null
+     */
+    public function find(int $id): ?Model
+    {
+        return $this->model->find($id);
+    }
+
+    /**
+     * Update existing record by id
+     *
+     * @param int $id
+     * @param array $attributes
+     * @return Model
+     */
+    public function update(int $id, array $attributes): Model
+    {
+        $this->find($id)->update($attributes);
+
+        return $this->find($id);
+    }
+
+    /**
      * Get the eloquent model instance
      *
      * @return Model
@@ -42,11 +67,4 @@ abstract class Repository
      * @return string
      */
     abstract public function model(): string;
-
-    /**
-     * Get the eloquent model as entity
-     *
-     * @return Entity
-     */
-    abstract public function toEntity(): Entity;
 }

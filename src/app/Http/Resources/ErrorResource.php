@@ -13,6 +13,22 @@ use Symfony\Component\HttpFoundation\Response;
 class ErrorResource extends JsonResource
 {
     /**
+     * Get HTTP error status code base on error values
+     */
+    public function getStatusCode(): int
+    {
+        if ($this->resource === 'api.login') {
+            return Response::HTTP_UNAUTHORIZED;
+        }
+
+        if (array_key_exists('id', $this->resource->errors())) {
+            return Response::HTTP_NOT_FOUND;
+        }
+
+        return Response::HTTP_BAD_REQUEST;
+    }
+
+    /**
      * Transform the resource into an array.
      *
      * @return array<string, mixed>
@@ -30,7 +46,7 @@ class ErrorResource extends JsonResource
         }
 
         if ($this->resource instanceof ValidationException) {
-            return (new HttpErrorEntity($this->resource->errors()))->toArray();
+            return (new HttpErrorEntity($this->resource->errors(), $this->getStatusCode()))->toArray();
         }
 
         return parent::toArray($request);
@@ -38,10 +54,6 @@ class ErrorResource extends JsonResource
 
     public function withResponse(Request $request, JsonResponse $response): void
     {
-        if ($this->resource === 'api.login') {
-            $response->setStatusCode(Response::HTTP_UNAUTHORIZED);
-        } elseif ($this->resource instanceof ValidationException) {
-            $response->setStatusCode(Response::HTTP_BAD_REQUEST);
-        }
+        $response->setStatusCode($this->getStatusCode());
     }
 }
