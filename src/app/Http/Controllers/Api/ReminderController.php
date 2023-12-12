@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Api;
 
 use App\EAV\Entities\ReminderEntity;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreReminderRequest;
 use App\Http\Resources\ReminderResource;
 use App\Repositories\Repository;
-use Illuminate\Http\Request;
 
 class ReminderController extends Controller
 {
@@ -29,7 +29,7 @@ class ReminderController extends Controller
     /**
      * Handle the incoming request.
      */
-    public function store(Request $request): ReminderResource
+    public function store(StoreReminderRequest $request): ReminderResource
     {
         $values = $request->only(['title', 'description', 'remind_at', 'event_at']);
 

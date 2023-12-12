@@ -69,4 +69,15 @@ class AuthService
             $this->refreshToken->getName() => $this->generateRefreshToken($user),
         ];
     }
+
+    /**
+     * Determine if the current authenticated user's can do something
+     *
+     * @param User $user
+     * @return bool
+     */
+    public static function isAllowToMakeRequest(User $user): bool
+    {
+        return $user->tokenCan(TokenAbility::ACCESS_API->value);
+    }
 }

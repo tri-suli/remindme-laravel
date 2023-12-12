@@ -22,7 +22,13 @@ class Value implements Arrayable, Stringable
      */
     public function __toString(): string
     {
-        return sprintf('%s: %s', $this->attribute, $this->name);
+        $value = $this->name;
+
+        if (is_bool($value)) {
+            $value = $value ? 'true' : 'false';
+        }
+
+        return sprintf('%s: %s', $this->attribute, $value);
     }
 
     public function getName(): mixed

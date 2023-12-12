@@ -21,7 +21,7 @@ class UserCanCreateReminderTest extends TestCase
             'title' => $this->faker->jobTitle,
             'description' => $this->faker->sentence,
             'remind_at' => Date::now()->format('U'),
-            'event_at' => Date::now()->format('U'),
+            'event_at' => Date::now()->addDays(3)->format('U'),
         ];
         $user = User::factory()->create();
         Sanctum::actingAs($user, ['access-api']);
