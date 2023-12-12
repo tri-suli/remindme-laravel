@@ -37,6 +37,26 @@ class ValidateUpdateReminderInputTest extends TestCase
     }
 
     /** @test */
+    public function cannot_update_reminder_record_because_its_not_belongs_to_current_user(): void
+    {
+        Sanctum::actingAs(User::factory()->create(), ['access-api']);
+        $reminder = Reminder::factory()->belongsTo(User::factory()->create())->create();
+
+        $response = $this->putJson("/api/reminders/$reminder->id");
+
+        $response
+            ->assertForbidden()
+            ->assertJson([
+                'ok' => false,
+                'data' => [
+                    'id' => ['The given id is not belongs to current user'],
+                ],
+                'err' => 'ERR_FORBIDDEN_ACCESS',
+                'msg' => 'user doesn\'t have enough authorization',
+            ]);
+    }
+
+    /** @test */
     public function cannot_update_remind_at_n_event_at_when_the_values_are_not_unix_date(): void
     {
         Date::setTestNow();
