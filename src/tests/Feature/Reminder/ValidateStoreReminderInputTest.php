@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Date;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
-class ValidateReminderInputTest extends TestCase
+class ValidateStoreReminderInputTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
 
