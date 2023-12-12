@@ -2,10 +2,12 @@
 
 namespace App\Http\Resources;
 
+use App\EAV\Entities\HttpErrorEntity;
 use App\Enums\AuthError;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
 
 class ErrorResource extends JsonResource
@@ -27,6 +29,10 @@ class ErrorResource extends JsonResource
             ];
         }
 
+        if ($this->resource instanceof ValidationException) {
+            return (new HttpErrorEntity($this->resource->errors()))->toArray();
+        }
+
         return parent::toArray($request);
     }
 
@@ -34,6 +40,8 @@ class ErrorResource extends JsonResource
     {
         if ($this->resource === 'api.login') {
             $response->setStatusCode(Response::HTTP_UNAUTHORIZED);
+        } elseif ($this->resource instanceof ValidationException) {
+            $response->setStatusCode(Response::HTTP_BAD_REQUEST);
         }
     }
 }

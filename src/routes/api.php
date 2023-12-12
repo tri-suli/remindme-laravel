@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\ReminderController;
 use App\Http\Controllers\Api\Session;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
@@ -22,4 +23,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::prefix('session')->group(function (Router $router) {
     $router->post('/', Session\LoginController::class)->name('api.login');
+});
+
+Route::prefix('reminders')->group(function (Router $router) {
+    $router->post('/', [ReminderController::class, 'store'])->name('api.reminder.store');
 });
