@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\EAV\Entities\ReminderEntity;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ShowReminderRequest;
 use App\Http\Requests\StoreReminderRequest;
 use App\Http\Requests\UpdateReminderRequest;
 use App\Http\Resources\ReminderResource;
@@ -25,6 +26,24 @@ class ReminderController extends Controller
     {
         $this->middleware('auth:sanctum');
         $this->repository = $repository;
+    }
+
+    /**
+     * Handle request to view reminder by id
+     */
+    public function show(ShowReminderRequest $request): ReminderResource
+    {
+        $reminder = $this->repository->find($request->id);
+
+        return new ReminderResource(
+            new ReminderEntity(
+                $reminder->id,
+                $reminder->title,
+                $reminder->description,
+                $reminder->remind_at,
+                $reminder->event_at
+            )
+        );
     }
 
     /**
