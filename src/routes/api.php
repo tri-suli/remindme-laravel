@@ -27,4 +27,5 @@ Route::prefix('session')->group(function (Router $router) {
 
 Route::prefix('reminders')->group(function (Router $router) {
     $router->post('/', [ReminderController::class, 'store'])->name('api.reminder.store');
+    $router->put('{id}', [ReminderController::class, 'update'])->name('api.reminder.update');
 });

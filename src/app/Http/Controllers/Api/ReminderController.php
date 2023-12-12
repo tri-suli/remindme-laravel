@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\EAV\Entities\ReminderEntity;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreReminderRequest;
+use App\Http\Requests\UpdateReminderRequest;
 use App\Http\Resources\ReminderResource;
 use App\Repositories\Repository;
 
@@ -37,6 +38,26 @@ class ReminderController extends Controller
             'user_id' => $request->user()->id,
             ...$values,
         ]);
+
+        return new ReminderResource(
+            new ReminderEntity(
+                $reminder->id,
+                $reminder->title,
+                $reminder->description,
+                $reminder->remind_at,
+                $reminder->event_at
+            )
+        );
+    }
+
+    /**
+     * Handle update existing reminder resource by id.
+     */
+    public function update(UpdateReminderRequest $request): ReminderResource
+    {
+        $values = $request->only(['title', 'description', 'remind_at', 'event_at']);
+
+        $reminder = $this->repository->update($request->id, $values);
 
         return new ReminderResource(
             new ReminderEntity(
