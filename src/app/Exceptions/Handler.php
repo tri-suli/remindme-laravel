@@ -36,7 +36,7 @@ class Handler extends ExceptionHandler
 
     public function render($request, Throwable $e): Response|JsonResponse|\Symfony\Component\HttpFoundation\Response|RedirectResponse|ResponseFactory
     {
-        if ($e instanceof MissingAbilityException) {
+        if ($e instanceof MissingAbilityException || $e instanceof CredentialMismatchException) {
             return (new ErrorResource([]))->toResponse($request);
         }
 

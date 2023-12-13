@@ -2,31 +2,28 @@
 
 namespace App\EAV\Entities;
 
+use App\EAV\Entity;
 use App\EAV\Values\Description;
 use App\EAV\Values\ID;
 use App\EAV\Values\Timestamp;
 use App\EAV\Values\Title;
-use App\EAV\Entity;
+use App\Models\Reminder;
 
 class ReminderEntity extends Entity
 {
     /**
      * Create a new reminder instance
      *
-     * @param int $id
-     * @param string $title
-     * @param string $description
-     * @param int $remindAt
-     * @param int $eventAt
+     * @param Reminder $model
      */
-    public function __construct(int $id, string $title, string $description, int $remindAt, int $eventAt)
+    public function __construct(Reminder $model)
     {
         parent::__construct('Reminder', [
-            new ID($id),
-            new Title($title),
-            new Description($description),
-            new Timestamp('remind', $remindAt),
-            new Timestamp('event', $eventAt),
+            new ID($model->id),
+            new Title($model->title),
+            new Description($model->description),
+            new Timestamp('remind', $model->remind_at),
+            new Timestamp('event', $model->event_at),
         ]);
     }
 

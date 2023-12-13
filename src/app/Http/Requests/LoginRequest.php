@@ -2,11 +2,12 @@
 
 namespace App\Http\Requests;
 
-use App\Rules\BelongsToRule;
+use App\Exceptions\CredentialMismatchException;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
-class ShowReminderRequest extends FormRequest
+class LoginRequest extends FormRequest
 {
     use WithCustomFailedValidation;
 
@@ -15,7 +16,7 @@ class ShowReminderRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return Auth::attempt($this->only('email', 'password'));
     }
 
     /**
@@ -26,17 +27,18 @@ class ShowReminderRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id' => ['exists:reminders,id', new BelongsToRule($this->user()->id)],
+            'email' => ['required', 'email'],
+            'password' => ['required'],
         ];
     }
 
     /**
-     * Prepare the data for validation.
+     * {@inheritDoc}
      *
-     * @return void
+     * @throws CredentialMismatchException
      */
-    protected function prepareForValidation(): void
+    public function failedAuthorization(): void
     {
-        $this->merge(['id' => $this->id]);
+        throw new CredentialMismatchException();
     }
 }

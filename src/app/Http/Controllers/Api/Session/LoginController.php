@@ -5,11 +5,9 @@ namespace App\Http\Controllers\Api\Session;
 use App\EAV\Entities\AccessTokenEntity;
 use App\EAV\Entities\UserEntity;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\ErrorResource;
+use App\Http\Requests\LoginRequest;
 use App\Http\Resources\CredentialResource;
 use App\Services\AuthService;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
@@ -34,16 +32,8 @@ class LoginController extends Controller
     /**
      * Handle the incoming request.
      */
-    public function __invoke(Request $request): CredentialResource|ErrorResource
+    public function __invoke(LoginRequest $request): CredentialResource
     {
-        $credential = $request->only('email', 'password');
-
-        if (! Auth::attempt($credential)) {
-            ErrorResource::withoutWrapping();
-
-            return new ErrorResource('api.login');
-        }
-
         $user = $request->user();
 
         return new CredentialResource(

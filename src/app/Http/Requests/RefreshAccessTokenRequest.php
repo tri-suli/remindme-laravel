@@ -2,11 +2,10 @@
 
 namespace App\Http\Requests;
 
-use App\Rules\BelongsToRule;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class ShowReminderRequest extends FormRequest
+class RefreshAccessTokenRequest extends FormRequest
 {
     use WithCustomFailedValidation;
 
@@ -26,17 +25,7 @@ class ShowReminderRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id' => ['exists:reminders,id', new BelongsToRule($this->user()->id)],
+            //
         ];
-    }
-
-    /**
-     * Prepare the data for validation.
-     *
-     * @return void
-     */
-    protected function prepareForValidation(): void
-    {
-        $this->merge(['id' => $this->id]);
     }
 }

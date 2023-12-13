@@ -32,14 +32,8 @@ class RemindersResource extends ResourceCollection
     public function toArray(Request $request): array
     {
         return [
-            'reminders' => $this->resource->transform(fn ($reminder) => new ReminderEntity(
-                $reminder->id,
-                $reminder->title,
-                $reminder->description,
-                $reminder->remind_at,
-                $reminder->event_at
-            ))->toArray(),
-            'limit' => intval($request->query('limit', 10))
+            'reminders' => $this->resource->transform(fn ($reminder) => new ReminderEntity($reminder))->toArray(),
+            'limit' => intval($request->query('limit', 10)),
         ];
     }
 }
