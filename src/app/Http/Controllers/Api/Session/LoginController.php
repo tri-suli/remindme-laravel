@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\Api\Session;
 
+use App\EAV\Entities\AccessTokenEntity;
+use App\EAV\Entities\UserEntity;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ErrorResource;
-use App\Http\Resources\TokenResource;
+use App\Http\Resources\CredentialResource;
 use App\Services\AuthService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -32,7 +34,7 @@ class LoginController extends Controller
     /**
      * Handle the incoming request.
      */
-    public function __invoke(Request $request): TokenResource|ErrorResource
+    public function __invoke(Request $request): CredentialResource|ErrorResource
     {
         $credential = $request->only('email', 'password');
 
@@ -44,12 +46,12 @@ class LoginController extends Controller
 
         $user = $request->user();
 
-        return new TokenResource([
-            'ok' => true,
-            'data' => [
-                'user' => $user->only('id', 'email', 'name'),
-                ...$this->authService->getTokens($user),
-            ],
-        ]);
+        return new CredentialResource(
+            new UserEntity($user->id, $user->name, $user->email),
+            new AccessTokenEntity(
+                $this->authService->generateAccessToken($user),
+                $this->authService->generateRefreshToken($user)
+            )
+        );
     }
 }
