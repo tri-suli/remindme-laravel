@@ -20,6 +20,8 @@ trait WithCustomFailedValidation
     protected function failedValidation(Validator $validator): void
     {
         if ($this->expectsJson()) {
+            ErrorResource::withoutWrapping();
+
             $resource = new ErrorResource(new ValidationException($validator));
 
             throw new HttpResponseException($resource->toResponse($this));
