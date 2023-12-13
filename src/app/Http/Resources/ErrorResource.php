@@ -15,9 +15,13 @@ class ErrorResource extends JsonResource
     /**
      * Get HTTP error status code base on error values
      */
-    public function getStatusCode(): int
+    public function getStatusCode(Request $request): int
     {
         if ($this->resource === 'api.login') {
+            return Response::HTTP_UNAUTHORIZED;
+        }
+
+        if ($request->routeIs('api.token.issue')) {
             return Response::HTTP_UNAUTHORIZED;
         }
 
@@ -49,6 +53,16 @@ class ErrorResource extends JsonResource
             ];
         }
 
+        if ($request->routeIs('api.token.issue')) {
+            $error = AuthError::REFRESH;
+
+            return [
+                'ok' => false,
+                'err' => $error->value,
+                'msg' => $error->message(),
+            ];
+        }
+
         if ($this->resource instanceof ValidationException) {
             return (new HttpErrorEntity($this->resource->errors(), $this->getStatusCode()))->toArray();
         }
@@ -58,6 +72,6 @@ class ErrorResource extends JsonResource
 
     public function withResponse(Request $request, JsonResponse $response): void
     {
-        $response->setStatusCode($this->getStatusCode());
+        $response->setStatusCode($this->getStatusCode($request));
     }
 }
