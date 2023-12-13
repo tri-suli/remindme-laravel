@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\EAV\Entities\ReminderEntity;
+use App\Enums\TokenAbility;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ShowReminderRequest;
 use App\Http\Requests\StoreReminderRequest;
@@ -27,7 +28,10 @@ class ReminderController extends Controller
      */
     public function __construct(Repository $repository)
     {
-        $this->middleware('auth:sanctum');
+        $this->middleware([
+            'auth:sanctum',
+            sprintf('ability:%s', TokenAbility::ACCESS_API->value),
+        ]);
         $this->repository = $repository;
     }
 
@@ -48,15 +52,7 @@ class ReminderController extends Controller
     {
         $reminder = $this->repository->find($request->id);
 
-        return new ReminderResource(
-            new ReminderEntity(
-                $reminder->id,
-                $reminder->title,
-                $reminder->description,
-                $reminder->remind_at,
-                $reminder->event_at
-            )
-        );
+        return new ReminderResource(new ReminderEntity($reminder));
     }
 
     /**
@@ -71,15 +67,7 @@ class ReminderController extends Controller
             ...$values,
         ]);
 
-        return new ReminderResource(
-            new ReminderEntity(
-                $reminder->id,
-                $reminder->title,
-                $reminder->description,
-                $reminder->remind_at,
-                $reminder->event_at
-            )
-        );
+        return new ReminderResource(new ReminderEntity($reminder));
     }
 
     /**
@@ -91,15 +79,7 @@ class ReminderController extends Controller
 
         $reminder = $this->repository->update($request->id, $values);
 
-        return new ReminderResource(
-            new ReminderEntity(
-                $reminder->id,
-                $reminder->title,
-                $reminder->description,
-                $reminder->remind_at,
-                $reminder->event_at
-            )
-        );
+        return new ReminderResource(new ReminderEntity($reminder));
     }
 
     /**
