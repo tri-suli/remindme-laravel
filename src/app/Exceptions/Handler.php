@@ -2,7 +2,13 @@
 
 namespace App\Exceptions;
 
+use App\Http\Resources\ErrorResource;
+use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Response;
+use Laravel\Sanctum\Exceptions\MissingAbilityException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -26,5 +32,14 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+    }
+
+    public function render($request, Throwable $e): Response|JsonResponse|\Symfony\Component\HttpFoundation\Response|RedirectResponse|ResponseFactory
+    {
+        if ($e instanceof MissingAbilityException) {
+            return (new ErrorResource([]))->toResponse($request);
+        }
+
+        return parent::render($request, $e);
     }
 }

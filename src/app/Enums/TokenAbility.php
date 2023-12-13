@@ -22,4 +22,14 @@ enum TokenAbility: string
             self::ISSUE_ACCESS_TOKEN => 'refresh_token',
         };
     }
+
+    /**
+     * Get all token abilities values
+     *
+     * @return array
+     */
+    public static function abilities(): array
+    {
+        return [self::ACCESS_API->value, self::ISSUE_ACCESS_TOKEN->value];
+    }
 }

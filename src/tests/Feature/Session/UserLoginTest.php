@@ -20,12 +20,13 @@ class UserLoginTest extends TestCase
         $email = $this->faker->email;
         $user = User::factory()->create(['email' => $email]);
         $this->mock(AuthService::class, function (MockInterface $mock) use ($user) {
-            $mock->shouldReceive('getTokens')
+            $mock->shouldReceive('generateAccessToken')
                 ->withArgs(fn ($param) => $param->id === $user->id)
-                ->andReturn([
-                    'access_token' => 'secret-access-token',
-                    'refresh_token' => 'secret-refresh-token',
-                ]);
+                ->andReturn('secret-access-token');
+
+            $mock->shouldReceive('generateRefreshToken')
+                ->withArgs(fn ($param) => $param->id === $user->id)
+                ->andReturn('secret-refresh-token');
         });
 
         $response = $this->postJson('api/session', [

@@ -24,4 +24,12 @@ class TokenAbilityTest extends TestCase
         $this->assertEquals('issue-access-token', $token->value);
         $this->assertEquals('refresh_token', $token->getName());
     }
+
+    /** @test */
+    public function it_will_return_all_enum_values(): void
+    {
+        $abilities = TokenAbility::abilities();
+
+        $this->assertEquals(['access-api', 'issue-access-token'], $abilities);
+    }
 }

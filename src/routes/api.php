@@ -23,6 +23,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::prefix('session')->group(function (Router $router) {
     $router->post('/', Session\LoginController::class)->name('api.login');
+    $router->put('/', Session\RefreshTokenController::class)->name('api.token.issue');
 });
 
 Route::prefix('reminders')->group(function (Router $router) {
