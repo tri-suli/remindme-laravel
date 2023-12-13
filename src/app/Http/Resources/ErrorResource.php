@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use App\EAV\Entities\HttpErrorEntity;
+use App\EAV\Entities\InvalidCredentialEntity;
 use App\Enums\AuthError;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -13,15 +14,24 @@ use Symfony\Component\HttpFoundation\Response;
 class ErrorResource extends JsonResource
 {
     /**
+     * {@inheritdoc}
+     */
+    public static $wrap = null;
+
+    /**
+     * {@inheritDoc}
+     */
+    public function __construct($resource = [])
+    {
+        parent::__construct($resource);
+    }
+
+    /**
      * Get HTTP error status code base on error values
      */
-    public function getStatusCode(Request $request): int
+    public function getStatusCode(): int
     {
-        if ($this->resource === 'api.login') {
-            return Response::HTTP_UNAUTHORIZED;
-        }
-
-        if ($request->routeIs('api.token.issue')) {
+        if ($this->resource instanceof InvalidCredentialEntity) {
             return Response::HTTP_UNAUTHORIZED;
         }
 
@@ -43,28 +53,12 @@ class ErrorResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        if ($this->resource === 'api.login') {
-            $error = AuthError::LOGIN;
-
-            return [
-                'ok' => false,
-                'err' => $error->value,
-                'msg' => $error->message(),
-            ];
-        }
-
-        if ($request->routeIs('api.token.issue')) {
-            $error = AuthError::REFRESH;
-
-            return [
-                'ok' => false,
-                'err' => $error->value,
-                'msg' => $error->message(),
-            ];
-        }
-
         if ($this->resource instanceof ValidationException) {
             return (new HttpErrorEntity($this->resource->errors(), $this->getStatusCode()))->toArray();
+        } elseif ($request->routeIs('api.login')) {
+            $this->resource = new InvalidCredentialEntity(AuthError::LOGIN);
+        } elseif ($request->routeIs('api.token.issue')) {
+            $this->resource = new InvalidCredentialEntity(AuthError::REFRESH);
         }
 
         return parent::toArray($request);
@@ -72,6 +66,6 @@ class ErrorResource extends JsonResource
 
     public function withResponse(Request $request, JsonResponse $response): void
     {
-        $response->setStatusCode($this->getStatusCode($request));
+        $response->setStatusCode($this->getStatusCode());
     }
 }
