@@ -5,9 +5,9 @@ namespace App\Http\Controllers\Api\Session;
 use App\EAV\Entities\AccessTokenEntity;
 use App\Enums\TokenAbility;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\RefreshAccessTokenRequest;
 use App\Http\Resources\CredentialResource;
 use App\Services\AuthService;
-use Illuminate\Http\Request;
 
 class RefreshTokenController extends Controller
 {
@@ -28,10 +28,10 @@ class RefreshTokenController extends Controller
     /**
      * Handle the incoming request.
      */
-    public function __invoke(Request $request): CredentialResource
+    public function __invoke(RefreshAccessTokenRequest $request): CredentialResource
     {
         $token = $this->auth->generateAccessToken($request->user());
 
-        return new CredentialResource(new AccessTokenEntity($token));
+        return new CredentialResource(null, new AccessTokenEntity($token));
     }
 }
