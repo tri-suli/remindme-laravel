@@ -11,6 +11,14 @@ use PHPUnit\Framework\TestCase;
 class ErrorResourceTest extends TestCase
 {
     /** @test */
+    public function it_will_return_internal_server_error_status_code_by_default(): void
+    {
+        $resource = new ErrorResource();
+
+        $this->assertEquals(500, $resource->getStatusCode());
+    }
+
+    /** @test */
     public function it_will_return_not_found_status_code_when_resource_errors_has_key_id(): void
     {
         $validationException = \Mockery::mock(ValidationException::class);
@@ -45,7 +53,7 @@ class ErrorResourceTest extends TestCase
     }
 
     /** @test */
-    public function it_will_return_bad_request_status_code_by_default(): void
+    public function it_will_return_bad_request_status_code(): void
     {
         $validationException = \Mockery::mock(ValidationException::class);
         $validationException->shouldReceive('errors')->andReturn(['field' => 'invalid']);
