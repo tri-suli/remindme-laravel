@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use App\Http\Resources\ErrorResource;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\JsonResponse;
@@ -38,6 +39,14 @@ class Handler extends ExceptionHandler
     {
         if ($e instanceof MissingAbilityException || $e instanceof CredentialMismatchException) {
             return (new ErrorResource([]))->toResponse($request);
+        }
+
+        if ($e instanceof AuthenticationException) {
+            return (new ErrorResource(['message' => 'Unauthenticated']))->toResponse($request);
+        }
+
+        if ($e instanceof \Error) {
+            return (new ErrorResource(['message' => $e->getMessage()]))->toResponse($request);
         }
 
         return parent::render($request, $e);

@@ -35,15 +35,19 @@ class ErrorResource extends JsonResource
             return Response::HTTP_UNAUTHORIZED;
         }
 
-        if (array_key_exists('id', $this->resource->errors())) {
-            if (str_contains($this->resource->errors()['id'][0], 'belongs to')) {
-                return Response::HTTP_FORBIDDEN;
+        if ($this->resource instanceof ValidationException) {
+            if (array_key_exists('id', $this->resource->errors())) {
+                if (str_contains($this->resource->errors()['id'][0], 'belongs to')) {
+                    return Response::HTTP_FORBIDDEN;
+                }
+
+                return Response::HTTP_NOT_FOUND;
             }
 
-            return Response::HTTP_NOT_FOUND;
+            return Response::HTTP_BAD_REQUEST;
         }
 
-        return Response::HTTP_BAD_REQUEST;
+        return Response::HTTP_INTERNAL_SERVER_ERROR;
     }
 
     /**
@@ -59,6 +63,8 @@ class ErrorResource extends JsonResource
             $this->resource = new InvalidCredentialEntity(AuthError::LOGIN);
         } elseif ($request->routeIs('api.token.issue')) {
             $this->resource = new InvalidCredentialEntity(AuthError::REFRESH);
+        } else {
+            $this->resource = new HttpErrorEntity($this->resource, $this->getStatusCode());
         }
 
         return parent::toArray($request);
